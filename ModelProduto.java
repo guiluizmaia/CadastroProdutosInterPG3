@@ -25,11 +25,7 @@ public class ModelProduto {
         this.tipo = tipo;
     }
 
-    ModelProduto() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    
+        
    
     public void setCod(String cod) {
         this.cod = cod;

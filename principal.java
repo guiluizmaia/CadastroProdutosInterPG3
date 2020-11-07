@@ -5,6 +5,8 @@
  */
 package src;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +23,58 @@ public class principal extends javax.swing.JFrame {
     public principal() {
         initComponents();
         carregaTabela();
+        
+        this.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                /*Atalho cadastrar*/
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    ModelProduto prod = new ModelProduto(TextCod.getText(), TextNome.getText(), TextQuant.getText(), TextTipo.getText());
+                    create(prod);
+                    TextCod.setText("");
+                    TextNome.setText("");
+                    TextQuant.setText("");
+                    TextTipo.setText("");  
+                    carregaTabela();
+                }
+                /*Atalho editar*/
+                else if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isShiftDown()){
+                    ModelProduto prod = new ModelProduto(TextCod.getText(), TextNome.getText(), TextQuant.getText(), TextTipo.getText());
+                    editar(prod);
+                    TextCod.setText("");
+                    TextNome.setText("");
+                    TextQuant.setText("");
+                    TextTipo.setText("");  
+                    carregaTabela();      
+                }
+                /*Atalho excluir*/
+                else if (e.getKeyCode() == KeyEvent.VK_DELETE){
+                    ModelProduto prod = new ModelProduto(TextCod.getText(), TextNome.getText(), TextQuant.getText(), TextTipo.getText());
+                    excluir(prod);
+                    TextCod.setText("");
+                    TextNome.setText("");
+                    TextQuant.setText("");
+                    TextTipo.setText("");  
+                    carregaTabela(); 
+                }
+                /*Atalho excluir tudo*/
+                else if (e.getKeyCode() == KeyEvent.VK_DELETE && e.isShiftDown()){
+                    excluirTudo();
+                    carregaTabela();     
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+       
+        });
     }
 
     /**
@@ -62,6 +116,7 @@ public class principal extends javax.swing.JFrame {
         BtnExc = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
         BtnExcT = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -110,6 +165,11 @@ public class principal extends javax.swing.JFrame {
                 BtnCadActionPerformed(evt);
             }
         });
+        BtnCad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                BtnCadKeyPressed(evt);
+            }
+        });
 
         Tb.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -155,15 +215,14 @@ public class principal extends javax.swing.JFrame {
             }
         });
 
+        jLabel6.setText("De double clique para selecionar um item cadastrado");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 743, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(87, 87, 87)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,15 +251,20 @@ public class principal extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(BtnExc, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(BtnExcT, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(39, Short.MAX_VALUE))
+                                .addComponent(BtnExcT, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 743, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(TextCod, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -220,6 +284,8 @@ public class principal extends javax.swing.JFrame {
                     .addComponent(BtnExc, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BtnExcT, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -253,9 +319,10 @@ public class principal extends javax.swing.JFrame {
         TextTipo.setText("");  
         carregaTabela();
     }//GEN-LAST:event_BtnCadActionPerformed
-    //Botão excluir
+    
+//Botão excluir
     private void BtnExcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnExcActionPerformed
-        ModelProduto prod = new ModelProduto(TextCod.getText(), TextNome.getText(), TextQuant.getText(), TextTipo.getText());
+        ModelProduto prod = new ModelProduto(TextCod.getText());
         excluir(prod);
         TextCod.setText("");
         TextNome.setText("");
@@ -276,18 +343,23 @@ public class principal extends javax.swing.JFrame {
     
 //Evento de clique na tabela
     private void TbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TbMouseClicked
-              
+       if (evt.getClickCount() == 2){       
        int position = Tb.getSelectedRow();
        TextCod.setText(String.valueOf(Tb.getValueAt(position, 0)));
        TextNome.setText(String.valueOf(Tb.getValueAt(position, 1)));
        TextQuant.setText(String.valueOf(Tb.getValueAt(position,2)));
        TextTipo.setText(String.valueOf(Tb.getValueAt(position, 3)));
+       }
     }//GEN-LAST:event_TbMouseClicked
 
     private void BtnExcTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnExcTActionPerformed
         excluirTudo();
         carregaTabela();        
     }//GEN-LAST:event_BtnExcTActionPerformed
+
+    private void BtnCadKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_BtnCadKeyPressed
+        
+    }//GEN-LAST:event_BtnCadKeyPressed
 
     
     private Connection con = null;
@@ -420,6 +492,7 @@ public class principal extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new principal().setVisible(true);
+                
             }
         });
     }
@@ -440,6 +513,7 @@ public class principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private java.util.List<src.Prod> prodList;
     private java.util.List<src.Prod> prodList1;
